@@ -1,9 +1,9 @@
 import React from 'react'
 
-function Ticket() {
+function TicketDetailsPage() {
   return (
     <div>ticket</div>
   )
 }
 
-export default Ticket
+export default TicketDetailsPage
