@@ -1,5 +1,5 @@
 import { createAgent, gemini } from "@inngest/agent-kit";
-import { envConfig } from "../config";
+import { envConfig } from "../config.js";
 import { raw } from "express";
 
 const analyzeTicket = async (ticket) => {
