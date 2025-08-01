@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const url = import.meta.env.VITE_SERVER_URL
 
 
-async function Singup() {
+function Singup() {
 
     const [form,setForm] = useState({
         email : "",
@@ -34,10 +34,9 @@ async function Singup() {
             })
 
             const data = await response.json();
-            if(response.status == 200){
-                localStorage.setItem("token",data.token);
+            if(response.ok){
                 localStorage.setItem("user",JSON.stringify(data.user));
-                navigate("/")
+                navigate("/login")
             }else{
                 alert(data.message || "signup failed");
             }
@@ -50,7 +49,43 @@ async function Singup() {
     }
 
   return (
-    <div>singup</div>
+    <div className="min-h-screen flex items-center justify-center bg-base-200">
+      <div className="card w-full max-w-sm shadow-xl bg-base-100">
+        <form onSubmit={handleSignup} className="card-body">
+          <h2 className="card-title justify-center">SignUp</h2>
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            className="input input-bordered"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="input input-bordered"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
+
+          <div className="form-control mt-4">
+            <button
+              type="submit"
+              className="btn btn-primary w-full"
+              disabled={loading}
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   )
 }
 
