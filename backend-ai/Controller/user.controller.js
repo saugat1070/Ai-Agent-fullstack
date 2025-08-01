@@ -22,12 +22,20 @@ export const signUp = async (req,res)=>{
 
         //fire inngest event
 
-        await inngest.send({
+        /* try {
+            await inngest.send({
             name : "user/signup",
             data : {
-                email
-            }
-        })
+                email,
+            },
+        });
+        } catch (error) {
+            console.log("Iggnest time out\n",error.message)
+        } */
+
+        // if(!mailSend){
+        //     res.json({"message":"mail Send doesn't success"})
+        // }
 
         // const token = jwt.sign({
         //     _id : User?._id
@@ -35,9 +43,13 @@ export const signUp = async (req,res)=>{
         //     expiresIn : "7d"
         // })
 
-        res.status(200).json({user})
+        res.status(200).json({
+            message : "user register success",
+            data : user
+        })
 
     } catch (error) {
+        console.log(error)
         return res.status(500).json({
             error : "signup failed",
             details : error.message
@@ -49,7 +61,8 @@ export const login = async (req,res)=>{
     const {email,password} = req.body
     
     try {
-        const existenceUser = User.findOne({email:email});
+        const existenceUser = await User.findOne({email:email});
+        console.log(existenceUser)
         if(!existenceUser){
             res.status(404).json({
                 message : "user with this email is not found,create account first"
@@ -57,18 +70,23 @@ export const login = async (req,res)=>{
             return;
         }
 
-        const isPassword = bcrypt.compareSync(password,existenceUser.password);
+        const isPassword = bcrypt.compareSync(password,existenceUser?.password);
         if(!isPassword){
             return res.status(401).json({
                 error : "invalid credientials"
             })
         }
-        token = jwt.sign({_id : existenceUser._id,
+
+        const token = jwt.sign({_id : existenceUser._id,
             role : existenceUser.role
         },envConfig.jwtSecret,{
             expiresIn : '7d'
         })
-        res.status(200).json(existenceUser,token)
+
+        res.status(200).json({
+            sucess : true,
+            token : token
+        })
     } catch (error) {
         return res.status(500).json({
             error : "signup failed",

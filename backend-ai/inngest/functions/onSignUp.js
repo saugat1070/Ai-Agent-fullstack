@@ -5,20 +5,27 @@ import { mailSend } from "../../utils/mailer.js"
 
 export const onUserSignUp = inngest.createFunction(
     {id: "on-user-signup",retries:2},
-    {event : "user/singup"},
-    async ({event,step})=>{
+    {event : "user/signup"},
+    async ({event, step})=>{
         try {
+            console.log("I am at onUserSignup")
             const {email} = event.data
             const user = await step.run("get-user-email",async()=>{
-                const userObject = await User.findOne({email})
+                const userObject = await User.findOne({email:email})
                 if(!userObject) throw new NonRetriableError("user no longer exists in our database");
                 return userObject
             })
-
+            console.log(user)
             await step.run("Send-welcome-email",async ()=>{
                 const subject = `welcome to the app`;
                 const message = `Hi \n\n\n thank you for signin`;
-                await mailSend(user.email,subject,message)
+                const mailData = {
+                    from : "saugatgiri1070@gmail.com",
+                    to : user.email,
+                    subject : subject,
+                    text : message
+                }
+                await mailSend(mailData)
             })
             return {success : true}
         } catch (error) {
