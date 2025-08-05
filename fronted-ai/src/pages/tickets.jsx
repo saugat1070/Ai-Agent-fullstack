@@ -1,5 +1,4 @@
 import React from 'react'
-import LoginSucessPopUp from '../../components/loginSucessPopUp'
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -26,7 +25,9 @@ function Tickets() {
         method : "GET"
       });
 
-      const data = response.json();
+      const data = await response.json();
+      console.log(data)
+      console.log(data.tickets)
       setTicket(data.tickets || []);
     } catch (error) {
       console.error("Failed to fetch tickets:",error);
@@ -45,20 +46,60 @@ function Tickets() {
     [event.target.name] : event.target.value
   })
 
+  const handleSubmit = async (event)=>{
+    event.preventDefault()
+    console.log(form)
+    const urlRequest = await fetch(`${url}/ticket`,{
+        headers : {
+          Authorization : `Bearer ${token}`
+        },
+        method : "POST",
+        body : JSON.stringify(form)
+      });
+      console.log(urlRequest)
+      console.log(urlRequest.message)
+
+  }
+
   return (
     <>
-      <div
+      {/* <div
         className={`mt-15 z-50 transition-all duration-500 ease-in-out right-10 ${
           showPopup ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
         }`}
       >
         <LoginSucessPopUp />
-      </div>
+      </div> */}
       <div className='p-4 max-w-3xl mx-auto'>
         <h2 className='text-2xl font-bold mb-4'>Create Ticket</h2>
         
 
+        <form onSubmit={handleSubmit} className='space-y-3 mb-8'>
 
+          <input type='text'
+          name='title'
+          value = {form.title}
+          onChange={handleChange}
+          placeholder='Ticket Title'
+          className ="input input-bordered w-full"
+          required
+          />
+
+          <textarea name="description"
+          value = {form.description}
+          onChange = {handleChange}
+          placeholder='Ticket Description'
+          className='textarea textarea-bordered w-full'
+          required
+          >
+          </textarea>
+          <button
+          className='button border-1 hover:border-blue-400 w-full h-8 text-center bg-blue-300 opacity-70 text-black rounded-xl'
+          onClick={handleSubmit}
+          >
+            <span className='bold italic'>Submit</span>
+            </button>
+        </form>
         <h2 className='text-xl font-semibold mb-2'>All Tickets</h2>
         <div className='space-y-3'>
           {
