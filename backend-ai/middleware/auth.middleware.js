@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
 import { envConfig } from "../config.js";
 
-export const authMiddleware = (req,res)=>{
-    const token = req.headers.authorization.split(" ")[1];
+export const authMiddleware = (req,res,next)=>{
+    const auth = req.headers.authorization;
+    const token = auth && req.headers.authorization.split(" ")[1];
     if(!token){
         return res.status(401).json({
             message : "unauthorize",
@@ -19,8 +20,12 @@ export const authMiddleware = (req,res)=>{
             req.user = {
                 _id : result._id
             }
+            next()
         })
+    
     } catch (error) {
-        return res.json({message:"internal server error"})
+        return res.json({message:"internal server error",
+            error : error.message
+        })
     }
 }

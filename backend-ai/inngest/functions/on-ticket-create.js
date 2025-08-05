@@ -36,7 +36,7 @@ export const onTicketCreated = inngest.createFunction(
               : aiResponse.priority,
             helpfulNotes: aiResponse.helpfulNotes,
             status: "IN_PROGRESS",
-            relatedSkils: aiResponse.relatedSkills,
+            relatedSkills: aiResponse.relatedSkills,
           });
           skils = aiResponse.relatedSkills;
         }
@@ -59,7 +59,7 @@ export const onTicketCreated = inngest.createFunction(
           });
         }
         await Ticket.findByIdAndUpdate(ticket._id, {
-          assingedTo: user?._id || null,
+          assignedTo: user?._id || null,
         });
         return user;
       });
